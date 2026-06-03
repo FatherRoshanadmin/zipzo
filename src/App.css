@@ -1,0 +1,359 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Navbar animation */
+.navbar {
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Hero animation */
+.hero-content {
+  animation: fadeInUp 0.7s ease;
+}
+
+@keyframes fadeInUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Product card hover */
+.product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeIn 0.5s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Button hover effects */
+.add-to-cart-btn {
+  transition: all 0.2s ease;
+}
+
+.add-to-cart-btn:hover {
+  background: #C0392B !important;
+  color: white !important;
+  transform: scale(1.02);
+}
+
+.buy-now-btn {
+  transition: all 0.2s ease;
+}
+
+.buy-now-btn:hover {
+  background: #922B21 !important;
+  transform: scale(1.02);
+}
+
+/* Search bar focus */
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.3);
+  border-radius: 30px;
+}
+
+/* Category button animation */
+.cat-btn {
+  transition: all 0.2s ease;
+}
+
+.cat-btn:hover {
+  transform: scale(1.05);
+  background: #f8e8e8;
+}
+
+/* Cart badge pulse */
+.cart-badge {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Stats counter animation */
+.stat-item {
+  animation: fadeInUp 0.8s ease;
+}
+
+/* Loading spinner */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #C0392B;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Page transition */
+.page-enter {
+  animation: fadeIn 0.4s ease;
+}
+/* App.css Additions for Premium UI */
+
+/* Smooth Card Hover (The 'Float' Effect) */
+.premium-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.premium-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(192, 57, 43, 0.12);
+}
+.premium-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Button Interactions */
+.card-btn-outline { transition: all 0.2s ease; }
+.card-btn-outline:hover { background: #FDEBD0; }
+.card-btn-solid { transition: all 0.2s ease; }
+.card-btn-solid:hover { background: #A93226; border-color: #A93226; box-shadow: 0 4px 10px rgba(192, 57, 43, 0.3); }
+
+/* Category Pills */
+.cat-btn:hover:not([style*="background: rgb(192, 57, 43)"]) {
+  background: #F8F9F9 !important;
+  color: #2C3E50 !important;
+  border-color: #BDC3C7 !important;
+}
+
+/* Navbar Buttons */
+.nav-btn-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Pulse Animation for Offer Button */
+.pulse-btn:hover {
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* Footer links */
+.footer-link-hover:hover {
+  color: #FFF !important;
+  text-decoration: underline;
+}
+
+/* Hide scrollbar for category menu */
+.catWrapper::-webkit-scrollbar {
+  display: none;
+}
+/* --- Premium Hero Background Animation --- */
+/* Oversized background combined with keyframes creates the "Drifting Mesh" effect */
+.hero-animated-bg {
+  background-size: 400% 400% !important;
+  animation: gradientDrift 15s ease infinite;
+}
+
+@keyframes gradientDrift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- Content Fade & Slide Animation --- */
+/* This triggers every time the banner state changes */
+.fade-in-content {
+  animation: contentSlideUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes contentSlideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Smooth Card Hover (The 'Float' Effect) --- */
+.premium-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.premium-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(192, 57, 43, 0.12);
+}
+.premium-card:hover img {
+  transform: scale(1.05);
+}
+
+/* --- Button Interactions --- */
+.card-btn-outline { transition: all 0.2s ease; }
+.card-btn-outline:hover { background: #FDEBD0; }
+.card-btn-solid { transition: all 0.2s ease; }
+.card-btn-solid:hover { background: #A93226; border-color: #A93226; box-shadow: 0 4px 10px rgba(192, 57, 43, 0.3); }
+
+/* --- Category Pills --- */
+.cat-btn:hover:not([style*="background: rgb(192, 57, 43)"]) {
+  background: #F8F9F9 !important;
+  color: #2C3E50 !important;
+  border-color: #BDC3C7 !important;
+}
+
+/* --- Navbar Buttons --- */
+.nav-btn-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* --- Pulse Animation for Offer Button --- */
+.pulse-btn:hover {
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* --- Footer links --- */
+.footer-link-hover:hover {
+  color: #FFF !important;
+  text-decoration: underline;
+}
+
+/* --- Hide scrollbar for category menu --- */
+.catWrapper::-webkit-scrollbar {
+  display: none;
+}
+/* --- App.css Additions for Cart.js Premium UI --- */
+
+/* Smooth Card Hover for Cart Items */
+.premium-cart-item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+.premium-cart-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: #E5E8E8 !important;
+}
+
+/* Premium Form Inputs Focus State */
+.premium-input:focus {
+  background: white !important;
+  border-color: #C0392B !important;
+  box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.1);
+}
+
+/* Premium Buttons */
+.premium-btn-checkout {
+  background: linear-gradient(135deg, #27AE60, #229954);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+}
+.premium-btn-checkout:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+}
+.premium-btn-checkout:disabled {
+  background: #BDC3C7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.premium-btn-outline {
+  background: transparent;
+  color: #C0392B;
+  border: 2px solid #C0392B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.premium-btn-outline:hover {
+  background: rgba(192, 57, 43, 0.05);
+}
+
+.premium-btn-solid {
+  background: #C0392B;
+  color: white;
+  border: 2px solid #C0392B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(192, 57, 43, 0.2);
+}
+.premium-btn-solid:hover {
+  background: #A93226;
+  border-color: #A93226;
+  box-shadow: 0 6px 16px rgba(192, 57, 43, 0.3);
+}
+
+/* Subtle interactions */
+.back-btn-hover:hover {
+  background: rgba(255,255,255,0.25) !important;
+}
+.delete-btn-hover:hover {
+  background: #FDEDEC !important;
+}
+
+/* Success Animation */
+.success-bounce {
+  animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes bounceIn {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Small loading spinner */
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 768px) {
+  .checkoutGrid { /* Used inside inline styles, needs manual target or let React handle it. But to be safe: */
+    grid-template-columns: 1fr !important;
+  }
+  .formGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+/* App.css ma add garnu */
+.order-item-clickable:hover {
+  background: #EAFAF1 !important; /* Halka green background hover huda */
+}
