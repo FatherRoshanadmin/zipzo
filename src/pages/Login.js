@@ -70,7 +70,7 @@ function Login() {
           </div>
 
           <div style={styles.forgotPassword}>
-            <a href="#" style={styles.forgotLink}>Forgot Password?</a>
+            <a href="/register" style={styles.forgotLink}>Forgot Password?</a>
           </div>
 
           <button className="premium-btn-solid" style={styles.btn} type="submit" disabled={isLoading}>
