@@ -17,9 +17,9 @@ function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const banners = [
-    { bg:'linear-gradient(-45deg, #c0392b, #e74c3c, #f39c12, #d35400)', emoji:'📚', title:'Biratnagar ko #1 Book Store!', sub:'Same day delivery • Free delivery above Rs. 500' },
+    { bg:'linear-gradient(-45deg, #c0392b, #e74c3c, #f39c12, #d35400)', emoji:'📚', title:'Biratnagar ko #1 Book Store!', sub:'Fast delivery • Free delivery above Rs. 500' },
     { bg:'linear-gradient(-45deg, #1A5276, #2980b9, #1abc9c, #16a085)', emoji:'🎓', title:'School & College Books Available!', sub:'All textbooks at best price' },
-    { bg:'linear-gradient(-45deg, #1E8449, #27ae60, #2ecc71, #f1c40f)', emoji:'🚚', title:'Free Delivery on Rs. 500+', sub:'Order now — deliver today!' },
+    { bg:'linear-gradient(-45deg, #1E8449, #27ae60, #2ecc71, #f1c40f)', emoji:'🚚', title:'Free Delivery on Rs. 500+', sub:'Order now — Got at Doorstep!' },
   ];
 
   useEffect(() => {
@@ -222,7 +222,7 @@ function Home() {
       {/* Stats Section */}
       <div style={styles.statsContainer}>
         <div style={styles.stats}>
-          {[['500+','Books Collection'],['Same Day','Fast Delivery'],['COD','Payment Available'],['100%','Original Quality']].map(([val,label], idx) => (
+          {[['500+','Books Collection'],['Within 5 Days','Fast Delivery'],['COD','Payment Available'],['100%','Original Quality']].map(([val,label], idx) => (
             <div key={label} style={{...styles.statItem, borderRight: idx !== 3 && !isMobile ? '1px solid #eee' : 'none'}}>
               <strong style={styles.statVal}>{val}</strong>
               <span style={styles.statLabel}>{label}</span>

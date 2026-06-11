@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, orderBy } from 'firebase/firestore';
 
 function Admin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -60,8 +60,18 @@ function Admin() {
   };
 
   const fetchOrders = async () => {
-    const snap = await getDocs(collection(db, 'orders'));
-    setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    // Orders lai naya dekhi purano ma sort garna orderBy use garney (yedi index required vayo vane console error aauxa, tyo bela index create garnu)
+    try {
+        const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    } catch (error) {
+        // Yedi firebase index xaina vane fallback approach (client side sorting)
+        const snap = await getDocs(collection(db, 'orders'));
+        const allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        allOrders.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+        setOrders(allOrders);
+    }
   };
 
   const updateOrderStatus = async (orderId, newStatus) => {
@@ -337,6 +347,7 @@ function Admin() {
           </div>
         )}
 
+        {/* --- DETAILED ORDERS TAB --- */}
         {activeTab === 'orders' && (
           <div>
             <h2 style={styles.sectionTitle}>Order Management ({orders.length})</h2>
@@ -346,33 +357,67 @@ function Admin() {
                 <h3 style={{color:'#2C3E50', marginTop:'16px'}}>No orders yet</h3>
               </div>
             ) : (
-              <div style={styles.tableCard}>
-                <div style={{...styles.tableHeader, gridTemplateColumns:'1fr 1.5fr 1fr 1.5fr'}}>
-                  <span>Order ID</span><span>Customer</span><span>Total</span><span>Status</span>
-                </div>
-                {orders.map(o => (
-                  <div key={o.id} style={{...styles.tableRow, gridTemplateColumns:'1fr 1.5fr 1fr 1.5fr'}}>
-                    <span style={{fontFamily:'monospace', fontSize:'14px', fontWeight:'800', color:'#C0392B'}}>#{o.id.slice(0,8).toUpperCase()}</span>
-                    <div>
-                      <div style={styles.strongText}>{o.userName || 'Guest'}</div>
-                      <div style={styles.lightText}>📞 {o.userPhone}</div>
-                      <div style={styles.lightText}>📍 {o.address?.ward}</div>
+              <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+                {orders.map((o) => {
+                  const orderDate = o.createdAt?.seconds 
+                    ? new Date(o.createdAt.seconds * 1000).toLocaleString() 
+                    : 'Date Unavailable';
+                    
+                  return (
+                    <div key={o.id} style={styles.orderCard}>
+                      <div style={styles.orderCardHeader}>
+                        <div>
+                          <div style={{fontWeight: '800', color: '#C0392B', fontSize: '15px'}}>Order ID: #{o.id.slice(0,8).toUpperCase()}</div>
+                          <div style={{fontSize: '12px', color: '#7F8C8D', marginTop: '4px'}}>🕒 {orderDate}</div>
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                           <span style={{fontSize: '13px', fontWeight: 'bold', color: '#555'}}>Status:</span>
+                           <select
+                              value={o.status || 'Pending'}
+                              onChange={e => updateOrderStatus(o.id, e.target.value)}
+                              style={{...styles.statusSelect,
+                                background: o.status === 'Delivered' ? '#EAFAF1' : o.status === 'Out for Delivery' ? '#EBF5FB' : '#FDF2E9',
+                                color: o.status === 'Delivered' ? '#27AE60' : o.status === 'Out for Delivery' ? '#2980B9' : '#D35400'
+                              }}>
+                              <option value="Pending">🕐 Pending</option>
+                              <option value="Packed">📦 Packed</option>
+                              <option value="Out for Delivery">🚚 Out for Delivery</option>
+                              <option value="Delivered">✅ Delivered</option>
+                            </select>
+                        </div>
+                      </div>
+
+                      <div style={styles.orderCardBody}>
+                        <div style={styles.orderCustomerInfo}>
+                          <h4 style={{margin: '0 0 10px', fontSize: '13px', color: '#34495E', textTransform: 'uppercase'}}>Customer Details</h4>
+                          <div style={styles.strongText}>👤 {o.userName || 'Guest'}</div>
+                          <div style={styles.lightText}>📞 {o.userPhone}</div>
+                          <div style={styles.lightText}>📍 {o.address?.ward}, {o.address?.city || 'Biratnagar'}</div>
+                          <div style={{marginTop: '10px', display: 'inline-block', background: '#F4F6F6', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', color: '#555'}}>💳 Payment: COD</div>
+                        </div>
+
+                        <div style={styles.orderItemsInfo}>
+                           <h4 style={{margin: '0 0 10px', fontSize: '13px', color: '#34495E', textTransform: 'uppercase'}}>Items Ordered</h4>
+                           <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                             {(o.items || []).map((item, idx) => (
+                               <div key={idx} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px dashed #EAEDED', paddingBottom: '8px'}}>
+                                 <div style={{fontSize: '14px', color: '#2C3E50', flex: 1}}>
+                                   <span style={{marginRight: '8px'}}>📚</span>{item.title} <span style={{color: '#7F8C8D', fontSize: '12px'}}>(x{item.qty})</span>
+                                 </div>
+                                 <div style={{fontSize: '14px', fontWeight: '600', color: '#555'}}>
+                                    Rs. {item.price * item.qty}
+                                 </div>
+                               </div>
+                             ))}
+                           </div>
+                           <div style={{textAlign: 'right', marginTop: '12px', fontSize: '18px', fontWeight: '800', color: '#C0392B'}}>
+                             Total: Rs. {o.total}
+                           </div>
+                        </div>
+                      </div>
                     </div>
-                    <span style={styles.priceText}>Rs. {o.total}</span>
-                    <select
-                      value={o.status || 'Pending'}
-                      onChange={e => updateOrderStatus(o.id, e.target.value)}
-                      style={{...styles.statusSelect,
-                        background: o.status === 'Delivered' ? '#EAFAF1' : o.status === 'Out for Delivery' ? '#EBF5FB' : '#FDF2E9',
-                        color: o.status === 'Delivered' ? '#27AE60' : o.status === 'Out for Delivery' ? '#2980B9' : '#D35400'
-                      }}>
-                      <option value="Pending">🕐 Pending</option>
-                      <option value="Packed">📦 Packed</option>
-                      <option value="Out for Delivery">🚚 Out for Delivery</option>
-                      <option value="Delivered">✅ Delivered</option>
-                    </select>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -411,23 +456,23 @@ const styles = {
   sectionTitle: { fontSize:'22px', fontWeight:'800', color:'#2C3E50', marginBottom:'24px' },
   sectionHeader: { display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'24px' },
   statsGrid: { display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'24px' },
-  statCard: { borderRadius:'20px', padding:'24px', display:'flex', alignItems:'center', gap:'20px' },
+  statCard: { borderRadius:'20px', padding:'24px', display:'flex', alignItems:'center', gap:'20px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' },
   statIcon: { fontSize:'40px', background:'white', width:'70px', height:'70px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'50%' },
   statNum: { fontSize:'36px', fontWeight:'800', color:'#2C3E50', marginBottom:'4px' },
   statLabel: { fontSize:'12px', color:'#7F8C8D', fontWeight:'700', textTransform:'uppercase', letterSpacing:'1px' },
-  tableCard: { background:'white', borderRadius:'20px', overflow:'hidden', border:'1px solid #EAEDED' },
+  tableCard: { background:'white', borderRadius:'20px', overflow:'hidden', border:'1px solid #EAEDED', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' },
   tableHeader: { display:'grid', padding:'16px 24px', background:'#F8F9F9', fontWeight:'800', fontSize:'12px', color:'#95A5A6', borderBottom:'1px solid #EAEDED', textTransform:'uppercase' },
   tableRow: { display:'grid', padding:'16px 24px', borderBottom:'1px solid #F2F4F4', fontSize:'14px', alignItems:'center' },
   thumbImg: { width:'56px', height:'80px', objectFit:'cover', borderRadius:'10px' },
   thumbPlaceholder: { width:'56px', height:'80px', background:'#FDF2E9', borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'24px' },
   strongText: { fontWeight:'800', color:'#2C3E50', marginBottom:'6px', fontSize:'15px' },
-  lightText: { color:'#7F8C8D', fontSize:'13px' },
+  lightText: { color:'#7F8C8D', fontSize:'13px', marginBottom: '4px' },
   priceText: { color:'#C0392B', fontWeight:'800', fontSize:'16px' },
   catTag: { background:'#FCEBEB', color:'#C0392B', padding:'4px 12px', borderRadius:'20px', fontSize:'11px', fontWeight:'800', textTransform:'uppercase' },
   editBtn: { background:'#EBF5FB', color:'#2980B9', border:'none', borderRadius:'8px', padding:'8px 14px', cursor:'pointer', fontSize:'13px', fontWeight:'700' },
   deleteBtn: { background:'#FDEDEC', color:'#C0392B', border:'none', borderRadius:'8px', padding:'8px 14px', cursor:'pointer', fontSize:'14px' },
   addBtn: { background:'#C0392B', color:'white', border:'none', padding:'12px 24px', borderRadius:'30px', cursor:'pointer', fontSize:'14px', fontWeight:'700' },
-  formCard: { background:'white', borderRadius:'20px', padding:'40px', border:'1px solid #EAEDED' },
+  formCard: { background:'white', borderRadius:'20px', padding:'40px', border:'1px solid #EAEDED', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' },
   formGrid: { display:'grid', gridTemplateColumns:'1fr 1fr', gap:'24px', marginBottom:'40px' },
   formGroup: { display:'flex', flexDirection:'column', gap:'8px' },
   label: { fontSize:'13px', fontWeight:'800', color:'#2C3E50', textTransform:'uppercase', letterSpacing:'0.5px' },
@@ -437,7 +482,14 @@ const styles = {
   cancelBtn: { padding:'14px 28px', background:'transparent', border:'2px solid #EAEDED', color:'#7F8C8D', borderRadius:'30px', cursor:'pointer', fontWeight:'800', fontSize:'14px' },
   submitBtn: { padding:'14px 32px', background:'#C0392B', color:'white', border:'none', borderRadius:'30px', cursor:'pointer', fontSize:'15px', fontWeight:'700' },
   empty: { textAlign:'center', padding:'100px 20px' },
-  statusSelect: { padding:'10px 14px', borderRadius:'10px', border:'none', fontSize:'13px', fontWeight:'800', cursor:'pointer', width:'100%', outline:'none' },
+  
+  /* Detailed Order Card Styles */
+  orderCard: { background: 'white', border: '1px solid #EAEDED', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.03)' },
+  orderCardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', background: '#F8F9F9', borderBottom: '1px solid #EAEDED' },
+  orderCardBody: { display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px', padding: '24px' },
+  orderCustomerInfo: { paddingRight: '24px', borderRight: '1px solid #EAEDED' },
+  orderItemsInfo: { display: 'flex', flexDirection: 'column' },
+  statusSelect: { padding:'8px 16px', borderRadius:'20px', border:'1px solid #EAEDED', fontSize:'13px', fontWeight:'800', cursor:'pointer', outline:'none' },
 };
 
 export default Admin;
