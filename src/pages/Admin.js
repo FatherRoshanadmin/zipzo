@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, orderBy } from 'firebase/firestore';
+// Update gareko import line (where hatayeko)
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, orderBy, query } from 'firebase/firestore';
 
 function Admin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,17 +28,18 @@ function Admin() {
     }
   }, [isLoggedIn]);
 
+  // Update gareko naya handleLogin function
   const handleLogin = async () => {
     if (!loginForm.username || !loginForm.password) {
       setLoginError('Username ra password duitai halnu!'); return;
     }
     try {
-      const q = query(collection(db, 'admin'),
-        where('username', '==', loginForm.username),
-        where('password', '==', loginForm.password)
+      const snap = await getDocs(collection(db, 'admin'));
+      const adminDoc = snap.docs.find(d =>
+        d.data().username === loginForm.username &&
+        d.data().password === loginForm.password
       );
-      const snap = await getDocs(q);
-      if (!snap.empty) {
+      if (adminDoc) {
         sessionStorage.setItem('adminLoggedIn', 'true');
         setIsLoggedIn(true);
         setLoginError('');
@@ -60,13 +62,11 @@ function Admin() {
   };
 
   const fetchOrders = async () => {
-    // Orders lai naya dekhi purano ma sort garna orderBy use garney (yedi index required vayo vane console error aauxa, tyo bela index create garnu)
     try {
         const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
         const snap = await getDocs(q);
         setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (error) {
-        // Yedi firebase index xaina vane fallback approach (client side sorting)
         const snap = await getDocs(collection(db, 'orders'));
         const allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         allOrders.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
@@ -148,7 +148,6 @@ function Admin() {
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
 
-  // Login Page
   if (!isLoggedIn) {
     return (
       <div style={loginStyles.page}>
@@ -347,7 +346,6 @@ function Admin() {
           </div>
         )}
 
-        {/* --- DETAILED ORDERS TAB --- */}
         {activeTab === 'orders' && (
           <div>
             <h2 style={styles.sectionTitle}>Order Management ({orders.length})</h2>
