@@ -5,9 +5,20 @@ import { collection, addDoc } from 'firebase/firestore';
 function Cart() {
   const [cart, setCart] = useState([]);
   const [step, setStep] = useState('cart'); // cart, address, success
-  const [address, setAddress] = useState({
-    name: '', phone: '', ward: 'Ward 1', area: '', note: '', deliveryDate: ''
+  
+  // Change 1: Load address from localStorage
+  const [address, setAddress] = useState(() => {
+    const saved = JSON.parse(localStorage.getItem('savedAddress') || '{}');
+    return {
+      name: saved.name || '',
+      phone: saved.phone || '',
+      ward: saved.ward || 'Ward 1',
+      area: saved.area || '',
+      note: saved.note || '',
+      deliveryDate: saved.deliveryDate || ''
+    };
   });
+  
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -57,6 +68,10 @@ function Cart() {
         deliveryDate: address.deliveryDate || minDateString,
         createdAt: new Date()
       });
+      
+      // Change 2: Save address to localStorage on successful order
+      localStorage.setItem('savedAddress', JSON.stringify(address));
+      
       localStorage.removeItem('cart');
       setCart([]);
       setStep('success');
