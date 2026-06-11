@@ -42,6 +42,14 @@ function Home() {
 
   const addToCart = (product, e) => {
     if (e) e.stopPropagation();
+
+    // 🔒 LOGIN CHECK: Yedi user login xaina bhane sidhai login page ma pathaune
+    if (!auth.currentUser) {
+      alert("Please Login or Register to buy books.");
+      window.location.href = '/login';
+      return;
+    }
+
     const existing = JSON.parse(localStorage.getItem('cart') || '[]');
     const found = existing.find(i => i.id === product.id);
     let updated;

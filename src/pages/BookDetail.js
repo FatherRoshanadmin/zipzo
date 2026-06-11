@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import { doc, getDoc, collection, getDocs, addDoc, query, where } from 'firebase/firestore';
 
 function BookDetail() {
@@ -34,6 +34,13 @@ function BookDetail() {
   }, [bookId]);
 
   const toggleWishlist = () => {
+    // 🔒 LOGIN CHECK
+    if (!auth.currentUser) {
+      alert("Please Login to save items to your Wishlist.");
+      window.location.href = '/login';
+      return;
+    }
+
     let existing = JSON.parse(localStorage.getItem('wishlist') || '[]');
     if (inWishlist) {
       existing = existing.filter(i => i.id !== book.id);
@@ -91,6 +98,13 @@ function BookDetail() {
   };
 
   const addToCart = (bookItem, qty = 1) => {
+    // 🔒 LOGIN CHECK
+    if (!auth.currentUser) {
+      alert("Please Login or Register to buy this book.");
+      window.location.href = '/login';
+      return;
+    }
+
     const existing = JSON.parse(localStorage.getItem('cart') || '[]');
     const found = existing.find(i => i.id === bookItem.id);
     let updated;
