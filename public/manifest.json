@@ -18,10 +18,11 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
+  "start_url": "/",
   "theme_color": "#C0392B",
-  "background_color": "#ffffff",
+  "background_color": "#C0392B",
   "description": "Biratnagar ko #1 Online Book Store — Same Day Delivery, Cash on Delivery",
   "orientation": "portrait",
   "categories": ["shopping", "books"]
