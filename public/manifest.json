@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "ZipZo",
+  "name": "ZipZo — Books at Your Doorstep",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,9 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#C0392B",
+  "background_color": "#ffffff",
+  "description": "Biratnagar ko #1 Online Book Store — Same Day Delivery, Cash on Delivery",
+  "orientation": "portrait",
+  "categories": ["shopping", "books"]
 }
